@@ -1,5 +1,7 @@
 package com.correrjuntos.project.race;
 
+import java.util.Date;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -10,7 +12,7 @@ public class Race {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    private String numberStreet;
+    private int numberStreet;
     private String nameStreet;
     private String city;
     private String furtherDetails;
@@ -19,20 +21,24 @@ public class Race {
     private String raceDuration;
     private int numberUsers;
     private int userId;
+    private Date createdAt;
+    private Date updatedAt;
 
     protected Race() {
 
     }
 
     public Race(
-        String numberStreet,
+        int numberStreet,
         String nameStreet,
         String city,
         String furtherDetails,
         String raceDate,
         String raceTime,
         String raceDuration,
-        int numberUsers
+        int numberUsers,
+        Date createdAt,
+        Date updatedAt
     ) {
         this.numberStreet = numberStreet;
         this.nameStreet = nameStreet;
@@ -42,6 +48,8 @@ public class Race {
         this.raceTime = raceTime;
         this.raceDuration = raceDuration;
         this.numberUsers = numberUsers;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -52,11 +60,11 @@ public class Race {
         this.id = id;
     }
 
-    public String getNumberStreet() {
+    public int getNumberStreet() {
         return this.numberStreet;
     }
 
-    public void setNumberStreet(String numberStreet) {
+    public void setNumberStreet(int numberStreet) {
         this.numberStreet = numberStreet;
     }
 
@@ -122,5 +130,21 @@ public class Race {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public Date getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt= createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
