@@ -1,5 +1,6 @@
 package com.correrjuntos.project.race;
 
+import java.time.LocalTime;
 import java.util.Date;
 
 import jakarta.persistence.*;
@@ -17,8 +18,9 @@ public class Race {
     private String city;
     private String furtherDetails;
     private String raceDate;
-    private String raceTime;
+    private LocalTime raceTime;
     private String raceDuration;
+    private String raceLevel;
     private int numberUsers;
     private int userId;
     private Date createdAt;
@@ -34,7 +36,7 @@ public class Race {
         String city,
         String furtherDetails,
         String raceDate,
-        String raceTime,
+        LocalTime raceTime,
         String raceDuration,
         int numberUsers,
         Date createdAt,
@@ -100,11 +102,11 @@ public class Race {
         this.raceDate = raceDate;
     }
 
-    public String getRaceTime() {
+    public LocalTime getRaceTime() {
         return this.raceTime;
     }
 
-    public void setRaceTime(String raceTime) {
+    public void setRaceTime(LocalTime raceTime) {
         this.raceTime = raceTime;
     }
 
@@ -114,6 +116,14 @@ public class Race {
 
     public void setRaceDuration(String raceDuration) {
         this.raceDuration = raceDuration;
+    }
+
+    public String getRaceLevel() {
+        return this.raceLevel;
+    }
+
+    public void setRaceLevel(String raceLevel) {
+        this.raceLevel = raceLevel;
     }
 
     public int getNumberUsers() {

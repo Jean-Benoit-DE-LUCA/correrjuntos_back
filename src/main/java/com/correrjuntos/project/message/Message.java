@@ -1,11 +1,11 @@
-package com.correrjuntos.project.race_user;
+package com.correrjuntos.project.message;
 
 import java.util.Date;
 
 import jakarta.persistence.*;
 
 @Entity
-public class Race_User {
+public class Message {
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -13,18 +13,22 @@ public class Race_User {
 
     private Long race_id;
     private Long user_id;
+    private String message;
     private Date createdAt;
     private Date updatedAt;
 
-    public Race_User() {
+    public Message() {
 
     }
 
-    public Race_User(Long race_id, Long user_id, Date createdAt, Date updatedAt) {
+    public Message(
+        Long race_id, 
+        Long user_id,
+        String message
+    ) {
         this.race_id = race_id;
         this.user_id = user_id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.message = message;
     }
 
     public Long getId() {
@@ -49,6 +53,14 @@ public class Race_User {
 
     public void setUserId(Long user_id) {
         this.user_id = user_id;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Date getCreatedAt() {

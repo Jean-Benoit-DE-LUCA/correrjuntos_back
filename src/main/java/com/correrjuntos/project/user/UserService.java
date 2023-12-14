@@ -21,6 +21,7 @@ public class UserService {
         String lastName,
         String email,
         String birthDate,
+        String gender,
         String streetNumber,
         String streetName,
         String zipCode,
@@ -32,12 +33,25 @@ public class UserService {
         StrongPasswordEncryptor encrypt = new StrongPasswordEncryptor();
         String passwordHashed = encrypt.encryptPassword(password);
 
+        Integer streetNumberFormat;
+
+        try {
+
+            streetNumberFormat = Integer.parseInt(streetNumber);
+        }
+
+        catch (Exception e) {
+
+            streetNumberFormat = -1;
+        }
+
         userRepository.insertUser(
             firstName,
             lastName,
             email,
             LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-d")),
-            Integer.parseInt(streetNumber),
+            gender,
+            streetNumberFormat,
             streetName,
             Integer.parseInt(zipCode),
             city,
@@ -53,6 +67,17 @@ public class UserService {
     {
         return userRepository.findUserByMail(
             email
+        );
+    }
+
+    public List<User> findUserById(
+        Integer user_id
+    )
+
+    {
+
+        return userRepository.findUserById(
+            user_id
         );
     }
 }

@@ -16,6 +16,7 @@ public class User {
     private String lastName;
     private String email;
     private LocalDate birthDate;
+    private String gender;
     private Integer streetNumber;
     private String streetName;
     private Integer zipCode;
@@ -26,11 +27,12 @@ public class User {
 
     }
 
-    public User(String firstName, String lastName, String email, LocalDate birthDate, Integer streetNumber, String streetName, Integer zipCode, String city, String password) {
+    public User(String firstName, String lastName, String email, LocalDate birthDate, String gender, Integer streetNumber, String streetName, Integer zipCode, String city, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.birthDate = birthDate;
+        this.gender = gender;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
         this.zipCode = zipCode;
@@ -76,6 +78,14 @@ public class User {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public String getGender() {
+        return this.gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public Integer getStreetNumber() {

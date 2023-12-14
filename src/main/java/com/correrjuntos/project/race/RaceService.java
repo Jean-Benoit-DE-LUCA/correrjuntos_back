@@ -3,8 +3,10 @@ package com.correrjuntos.project.race;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +75,8 @@ public class RaceService {
         String inputRaceTime,
         String inputStreetName,
         Integer inputStreetNumber,
-        String selectHour,
+        LocalTime selectHour,
+        String selectLevel,
         String textAreaFurtherDetails,
         String userMail,
         Integer userId
@@ -105,6 +108,7 @@ public class RaceService {
             inputStreetName,
             inputStreetNumber,
             selectHour,
+            selectLevel,
             textAreaFurtherDetails,
             userId,
             created_at,
@@ -112,6 +116,29 @@ public class RaceService {
         );
 
         return raceRepository.getLastInsertedRace(userId).get(0);
+    }
+
+    // UPDATE RACE //
+
+    public void updateRace(
+        String inputCity,
+        String inputDate,
+        int inputMaxUsers,
+        String inputRaceTime,
+        String inputStreetName,
+        int inputStreetNumber,
+        LocalTime selectHour,
+        String selectLevel,
+        String textAreaFurtherDetails,
+        Long id
+    ) {
+
+        ZonedDateTime dateNow = ZonedDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime updated_at = LocalDateTime.parse(dateNow.toString().replace("T", " ").substring(0, dateNow.toString().replace("T", " ").indexOf(".")), formatter);
+
+        raceRepository.updateRace(inputCity, inputDate, inputMaxUsers, inputRaceTime, inputStreetName, inputStreetNumber, selectHour, selectLevel, textAreaFurtherDetails, updated_at, id);
     }
 
     // INSERT RACE_USER //
@@ -189,6 +216,30 @@ public class RaceService {
         return newObj;
     }
 
+    // GET ALL RACES BY USER //
+
+    public Map<String, Map<String, Object>> findAllRacesByUser(Long user_id) {
+
+        Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
+
+        List<Map<Object, Object>> listResult = raceRepository.findAllRacesByUserId(user_id);
+
+        for (int i = 0; i < listResult.size(); i++) {
+
+            Map<String, Object> raceKeyValue = new HashMap<String, Object>();
+
+            for (Object key : listResult.get(i).keySet()) {
+
+                raceKeyValue.put((String)key, listResult.get(i).get(key));
+            }
+
+            result.put(Integer.toString(i), raceKeyValue);
+        }
+
+
+        return result;
+    }
+
     // GET RACE BY ID //
 
     public List<Map<Object, Object>> findRaceById(Long race_id) {
@@ -221,6 +272,13 @@ public class RaceService {
         return result;
     }
 
+    // GET COUNT USERS PARTICIPATE //
+
+    public List<Map<String, Object>> getCountUsersParticipate() {
+
+        return raceRepository.getCountUsersParticipate();
+    }
+
     // PARTICIPATE RACE //
 
     public List<Map<Object, Object>> participateRace(
@@ -238,5 +296,14 @@ public class RaceService {
     ) {
 
         raceRepository.deleteRaceUser(race_id, user_id);
+    }
+
+    // DELETE RACE //
+
+    public void deleteRace(
+        Long race_id
+    ) {
+        raceRepository.deleteRace(race_id);
+        raceRepository.deleteAllRaceUserByRaceId(race_id);
     }
 }
