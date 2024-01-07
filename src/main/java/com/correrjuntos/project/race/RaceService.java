@@ -79,10 +79,14 @@ public class RaceService {
         String selectLevel,
         String textAreaFurtherDetails,
         String userMail,
-        Integer userId
+        Integer userId,
+        Boolean inputOnlyMale,
+        Boolean inputOnlyFemale
     ) {
 
         int maxUsers = 0;
+        String onlyMale = "";
+        String onlyFemale = "";
 
         if (inputCheckBoxNoLimit) {
 
@@ -92,6 +96,26 @@ public class RaceService {
         else if (!inputCheckBoxNoLimit) {
 
             maxUsers = inputMaxUsers;
+        }
+
+        if (inputOnlyMale){
+
+            onlyMale = "yes";
+        }
+
+        else if (!inputOnlyMale) {
+
+            onlyMale = "no";
+        }
+
+        if (inputOnlyFemale) {
+
+            onlyFemale = "yes";
+        }
+
+        else if (!inputOnlyFemale) {
+
+            onlyFemale = "no";
         }
 
         ZonedDateTime dateNow = ZonedDateTime.now();
@@ -109,6 +133,8 @@ public class RaceService {
             inputStreetNumber,
             selectHour,
             selectLevel,
+            onlyMale,
+            onlyFemale,
             textAreaFurtherDetails,
             userId,
             created_at,
@@ -130,15 +156,40 @@ public class RaceService {
         LocalTime selectHour,
         String selectLevel,
         String textAreaFurtherDetails,
-        Long id
+        Long id,
+        Boolean inputOnlyMale,
+        Boolean inputOnlyFemale
     ) {
+
+        String onlyMale = "";
+        String onlyFemale = "";
+
+        if (inputOnlyMale){
+
+            onlyMale = "yes";
+        }
+
+        else if (!inputOnlyMale) {
+
+            onlyMale = "no";
+        }
+
+        if (inputOnlyFemale) {
+
+            onlyFemale = "yes";
+        }
+
+        else if (!inputOnlyFemale) {
+
+            onlyFemale = "no";
+        }
 
         ZonedDateTime dateNow = ZonedDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         LocalDateTime updated_at = LocalDateTime.parse(dateNow.toString().replace("T", " ").substring(0, dateNow.toString().replace("T", " ").indexOf(".")), formatter);
 
-        raceRepository.updateRace(inputCity, inputDate, inputMaxUsers, inputRaceTime, inputStreetName, inputStreetNumber, selectHour, selectLevel, textAreaFurtherDetails, updated_at, id);
+        raceRepository.updateRace(inputCity, inputDate, inputMaxUsers, inputRaceTime, inputStreetName, inputStreetNumber, selectHour, selectLevel, onlyMale, onlyFemale, textAreaFurtherDetails, updated_at, id);
     }
 
     // INSERT RACE_USER //
@@ -279,6 +330,52 @@ public class RaceService {
         return raceRepository.getCountUsersParticipate();
     }
 
+    // SEARCH RACES //
+
+    public Map<String, Map<String, Object>> searchRaces(
+        String cityToSearch,
+        String userToSearch,
+        String dateStart,
+        String dateEnd,
+        Boolean allDatesCheck,
+        String hourStart,
+        String hourEnd,
+        Boolean allHoursCheck
+    ) {
+
+        Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
+
+
+        String dateStartResult = allDatesCheck ? "" : dateStart;
+        String dateEndResult = allDatesCheck ? "" : dateEnd;
+
+        String hourStartResult = allHoursCheck ? "" : hourStart;
+        String hourEndResult = allHoursCheck ? "" : hourEnd;
+
+        List<Map<String, Object>> resultRaces = raceRepository.searchRaces(
+            cityToSearch,
+            userToSearch,
+            dateStartResult,
+            dateEndResult,
+            hourStartResult,
+            hourEndResult
+        );
+
+        for (int i = 0; i < resultRaces.size(); i++) {
+
+            Map<String, Object> newObjRace = new HashMap<String, Object>();
+
+            for (String key : resultRaces.get(i).keySet()) {
+
+                newObjRace.put(key, resultRaces.get(i).get(key));
+            }
+
+            result.put(String.valueOf(i), newObjRace);
+        }
+
+        return result;
+    }
+
     // PARTICIPATE RACE //
 
     public List<Map<Object, Object>> participateRace(
@@ -305,5 +402,6 @@ public class RaceService {
     ) {
         raceRepository.deleteRace(race_id);
         raceRepository.deleteAllRaceUserByRaceId(race_id);
+        raceRepository.deleteAllMessageByRaceId(race_id);
     }
 }

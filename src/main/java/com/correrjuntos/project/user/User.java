@@ -22,12 +22,13 @@ public class User {
     private Integer zipCode;
     private String city;
     private String password;
+    private String picture;
 
     public User() {
 
     }
 
-    public User(String firstName, String lastName, String email, LocalDate birthDate, String gender, Integer streetNumber, String streetName, Integer zipCode, String city, String password) {
+    public User(String firstName, String lastName, String email, LocalDate birthDate, String gender, Integer streetNumber, String streetName, Integer zipCode, String city, String password, String picture) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -38,6 +39,7 @@ public class User {
         this.zipCode = zipCode;
         this.city = city;
         this.password = password;
+        this.picture = picture;
     }
 
     public Long getId() {
@@ -126,5 +128,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPicture() {
+        return this.picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 }

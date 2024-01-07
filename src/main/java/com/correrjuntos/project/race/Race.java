@@ -22,6 +22,8 @@ public class Race {
     private String raceDuration;
     private String raceLevel;
     private int numberUsers;
+    private String onlyMale;
+    private String onlyFemale;
     private int userId;
     private Date createdAt;
     private Date updatedAt;
@@ -132,6 +134,22 @@ public class Race {
 
     public void setNumberUsers(int numberUsers) {
         this.numberUsers = numberUsers;
+    }
+
+    public String getOnlyMale() {
+        return this.onlyMale;
+    }
+
+    public void setOnlyMale(String onlyMale) {
+        this.onlyMale = onlyMale;
+    }
+
+    public String getOnlyFemale() {
+        return this.onlyFemale;
+    }
+
+    public void setOnlyFemale(String onlyFemale) {
+        this.onlyFemale= onlyFemale;
     }
 
     public int getUserId() {

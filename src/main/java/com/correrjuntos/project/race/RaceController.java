@@ -57,11 +57,18 @@ public class RaceController {
 
             try {
                 maxUsers = Integer.parseInt((String)body.get("inputMaxUsers"));
-                numberStreet = Integer.valueOf((String)body.get("inputStreetNumber"));
+                
             }
 
             catch (NumberFormatException e) {
                 maxUsers = -1;
+            }
+
+            try {
+                numberStreet = Integer.valueOf((String)body.get("inputStreetNumber"));
+            }
+
+            catch (NumberFormatException e) {
                 numberStreet = -1;
             }
 
@@ -85,7 +92,9 @@ public class RaceController {
                 (String)body.get("selectLevel"),
                 StringEscapeUtils.escapeHtml4((String)body.get("textAreaFurtherDetails")),
                 (String)body.get("userMail"),
-                (Integer)body.get("userId")
+                (Integer)body.get("userId"),
+                (Boolean)body.get("inputOnlyMale"),
+                (Boolean)body.get("inputOnlyFemale")
             );
 
             raceService.insertRaceUser(
@@ -170,6 +179,9 @@ public class RaceController {
             String userMail = (String)body.get("userMail");
             Integer userId = (Integer)body.get("userId");
 
+            Boolean onlyMale = (Boolean)body.get("inputOnlyMale");
+            Boolean onlyFemale = (Boolean)body.get("inputOnlyFemale");
+
             raceService.updateRace(
                 inputCity,
                 inputDate,
@@ -180,7 +192,9 @@ public class RaceController {
                 time,
                 selectLevel,
                 textAreaFurtherDetails,
-                race_id
+                race_id,
+                onlyMale,
+                onlyFemale
             );
 
             getBodyResponse.put("bodyResponse", true);
@@ -297,6 +311,41 @@ public class RaceController {
         result.put("users_participate", getUsersParticipate);
 
         return result;
+    }
+
+    // SEARCH RACES //
+
+    @PostMapping(value="/api/race/search")
+    Map<String, Map<String, Object>> searchRaces(
+        @RequestHeader Map<String, String> headers,
+        @RequestBody Map<String, Object> body
+    ) {
+
+        String cityToSearch = StringEscapeUtils.escapeHtml4((String)body.get("cityToSearch"));
+        String userToSearch = StringEscapeUtils.escapeHtml4((String)body.get("userToSearch"));
+
+        String dateStart = (String)body.get("dateStart");
+        String dateEnd = (String)body.get("dateEnd");
+        Boolean allDatesCheck = (Boolean)body.get("allDatesCheck");
+
+        String hourStart = (String)body.get("hourStart");
+        String hourEnd = (String)body.get("hourEnd");
+        Boolean allHoursCheck = (Boolean)body.get("allHoursCheck");
+
+        // 
+
+        Map<String, Map<String, Object>> getResult = raceService.searchRaces(
+            cityToSearch,
+            userToSearch,
+            dateStart,
+            dateEnd,
+            allDatesCheck,
+            hourStart,
+            hourEnd,
+            allHoursCheck
+        );
+
+        return getResult;
     }
 
     // PARTICIPATE RACE //
@@ -483,12 +532,13 @@ public class RaceController {
     }
 
     @GetMapping(value="/api/race/getracesbyuser/{email}/{user_id}")
-    Map<String, Map<String, Object>> getRacesByUser(
+    Map<String, Map<String, Map<String, Object>>> getRacesByUser(
         @RequestHeader Map<String, String> headers,
         @PathVariable(value = "email") String email,
         @PathVariable(value = "user_id") Long user_id
     ) {
 
+        Map<String, Map<String, Map<String, Object>>> resultEnd = new HashMap<String, Map<String, Map<String, Object>>>();
         Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
         Map<String, Object> response = new HashMap<String, Object>();
 
@@ -497,16 +547,41 @@ public class RaceController {
 
         if (resultCheckJwt.get("tokenExpires") == false) {
 
-            return raceService.findAllRacesByUser(user_id);
+        // get users participate race //
+
+        List<Map<String, Object>> getCountUsersParticipate = raceService.getCountUsersParticipate();
+
+        Map<String, Map<String, Object>> fetchCountWrap = new HashMap<String, Map<String, Object>>();
+
+        for (int i = 0; i < getCountUsersParticipate.size(); i++) {
+
+            Map<String, Object> getCountUsersParticipateResult = new HashMap<String, Object>();
+
+            for (String key : getCountUsersParticipate.get(i).keySet()) {
+
+                getCountUsersParticipateResult.put(key, getCountUsersParticipate.get(i).get(key));
+            }
+
+            fetchCountWrap.put(String.valueOf(i), getCountUsersParticipateResult);
+            
+        }
+
+        
+        resultEnd.put("fetchCountUsersParticipate", fetchCountWrap);
+        resultEnd.put("racesUser", raceService.findAllRacesByUser(user_id));
+
+        return resultEnd;
+        
         }
 
         else if (resultCheckJwt.get("tokenExpires") == true) {
 
             response.put("error", "Authentication error.");
             result.put("response", response);
-            return result;
+
+            resultEnd.put("response", result);
         }
 
-        return result;
+        return resultEnd;
     }
 }
