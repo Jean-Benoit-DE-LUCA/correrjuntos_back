@@ -35,5 +35,3 @@ build/
 ###
 
 env.properties
-/src/main/resources/static/videos
-/src/main/resources/static/pictures
