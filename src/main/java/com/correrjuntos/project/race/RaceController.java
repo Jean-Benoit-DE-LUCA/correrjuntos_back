@@ -269,49 +269,73 @@ public class RaceController {
         return result;
     }
 
+
+
+
+
+
     // GET RACE BY ID //
 
     @GetMapping(value="/api/race/findrace/{race_id}")
     Map<String, Object> findRaceById(@PathVariable("race_id") Long race_id) {
 
-        Map<String, Object> result = new HashMap<String, Object>();
 
-        List<Map<Object, Object>> getResult = raceService.findRaceById(race_id);
-        Map<String, Map<Object, Object>> getUsersParticipate = raceService.getUsersParticipate(race_id);
+        try {
 
-        // create new object with unescaped results //
+            Map<String, Object> result = new HashMap<String, Object>();
 
-        List<Map<Object, Object>> newList = new ArrayList<Map<Object, Object>>();
-        Map<Object, Object> getResultUnEscaped = new HashMap<Object, Object>();
+            List<Map<Object, Object>> getResult = raceService.findRaceById(race_id);
+            Map<String, Map<Object, Object>> getUsersParticipate = raceService.getUsersParticipate(race_id);
 
-        for (Object key : getResult.get(0).keySet()) {
+            // create new object with unescaped results //
 
-            if (getResult.get(0).get(key).getClass() == String.class) {
+            List<Map<Object, Object>> newList = new ArrayList<Map<Object, Object>>();
+            Map<Object, Object> getResultUnEscaped = new HashMap<Object, Object>();
 
-                getResultUnEscaped.put(key.toString(), StringEscapeUtils.unescapeHtml4(getResult.get(0).get(key).toString()));
-            }
+            for (Object key : getResult.get(0).keySet()) {
 
-            else {
-                
-                if (getResult.get(0).get(key).getClass() == Timestamp.class) {
+                if (getResult.get(0).get(key).getClass() == String.class) {
 
-                    getResultUnEscaped.put(key, getResult.get(0).get(key).toString().substring(0, getResult.get(0).get(key).toString().indexOf(".")));
+                    getResultUnEscaped.put(key.toString(), StringEscapeUtils.unescapeHtml4(getResult.get(0).get(key).toString()));
                 }
 
                 else {
+                    
+                    if (getResult.get(0).get(key).getClass() == Timestamp.class) {
 
-                    getResultUnEscaped.put(key.toString(), getResult.get(0).get(key));
+                        getResultUnEscaped.put(key, getResult.get(0).get(key).toString().substring(0, getResult.get(0).get(key).toString().indexOf(".")));
+                    }
+
+                    else {
+
+                        getResultUnEscaped.put(key.toString(), getResult.get(0).get(key));
+                    }
                 }
             }
+
+            newList.add(getResultUnEscaped);
+
+            result.put("race_info", /*getResult.get(0)*/newList.get(0));
+            result.put("users_participate", getUsersParticipate);
+
+            return result;
         }
 
-        newList.add(getResultUnEscaped);
+        catch (Exception e) {
 
-        result.put("race_info", /*getResult.get(0)*/newList.get(0));
-        result.put("users_participate", getUsersParticipate);
+            Map<String, Object> result = new HashMap<String, Object>();
 
-        return result;
+            result.put("error", e.getMessage());
+
+            return result;
+        }
     }
+
+
+
+
+
+
 
     // SEARCH RACES //
 
@@ -321,32 +345,74 @@ public class RaceController {
         @RequestBody Map<String, Object> body
     ) {
 
-        String cityToSearch = StringEscapeUtils.escapeHtml4((String)body.get("cityToSearch"));
-        String userToSearch = StringEscapeUtils.escapeHtml4((String)body.get("userToSearch"));
+        Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
 
-        String dateStart = (String)body.get("dateStart");
-        String dateEnd = (String)body.get("dateEnd");
-        Boolean allDatesCheck = (Boolean)body.get("allDatesCheck");
 
-        String hourStart = (String)body.get("hourStart");
-        String hourEnd = (String)body.get("hourEnd");
-        Boolean allHoursCheck = (Boolean)body.get("allHoursCheck");
 
-        // 
+        // if unique race id number typed //
 
-        Map<String, Map<String, Object>> getResult = raceService.searchRaces(
-            cityToSearch,
-            userToSearch,
-            dateStart,
-            dateEnd,
-            allDatesCheck,
-            hourStart,
-            hourEnd,
-            allHoursCheck
-        );
+        if (body.containsKey("race_id")) {
 
-        return getResult;
+            Map<String, Map<String, Object>> getResult = raceService.searchRaceById(Integer.valueOf((String)body.get("race_id")));
+
+            if (getResult.keySet().size() == 0) {
+
+                Map<String, Object> objResult = new HashMap<String, Object>();
+
+                objResult.put("message", "No race found");
+
+                result.put("error", objResult);
+
+                return result;
+
+            }
+
+            return getResult;
+        }
+
+
+
+
+        // if NOT race id typed //
+            
+        if (!body.containsKey("race_id")) {
+
+            String cityToSearch = StringEscapeUtils.escapeHtml4((String)body.get("cityToSearch"));
+            String userToSearch = StringEscapeUtils.escapeHtml4((String)body.get("userToSearch"));
+
+            String dateStart = (String)body.get("dateStart");
+            String dateEnd = (String)body.get("dateEnd");
+            Boolean allDatesCheck = (Boolean)body.get("allDatesCheck");
+
+            String hourStart = (String)body.get("hourStart");
+            String hourEnd = (String)body.get("hourEnd");
+            Boolean allHoursCheck = (Boolean)body.get("allHoursCheck");
+
+            // 
+
+
+            Map<String, Map<String, Object>> getResult = raceService.searchRaces(
+                cityToSearch,
+                userToSearch,
+                dateStart,
+                dateEnd,
+                allDatesCheck,
+                hourStart,
+                hourEnd,
+                allHoursCheck
+            );
+
+            return getResult;
+        }
+
+        return result;
     }
+
+
+
+
+
+
 
     // PARTICIPATE RACE //
 
@@ -530,6 +596,12 @@ public class RaceController {
 
         return result;
     }
+
+
+
+
+
+
 
     @GetMapping(value="/api/race/getracesbyuser/{email}/{user_id}")
     Map<String, Map<String, Map<String, Object>>> getRacesByUser(

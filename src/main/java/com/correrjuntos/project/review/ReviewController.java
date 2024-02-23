@@ -1,10 +1,12 @@
 package com.correrjuntos.project.review;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -121,8 +123,44 @@ public class ReviewController {
         Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
         Map<String, Object> obj = new HashMap<String, Object>();
 
-        obj.put("test", true);
-        result.put("result", obj);
+        Map<String, Map<String, Object>> fetchReviews = reviewService.fetchReviews(user_id);
+
+        return fetchReviews;
+    }
+
+
+
+
+    // DELETE REVIEW //
+
+    @DeleteMapping(value="/api/review/delete/{review_id}/email/{email}")
+    public Map<String, Object> deleteReview(
+        @RequestHeader Map<String, String> headers,
+        @PathVariable("review_id") Integer review_id,
+        @PathVariable("email") String email
+    )
+
+    {
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        Map<String, Object> checkJWT = Jwt.checkJWT(headers.get("authorization"), email);
+        Map<String, Boolean> resultCheckJwt = reviewService.jwtResponse(checkJWT);
+
+        if (resultCheckJwt.get("tokenExpires") == false) {
+
+            reviewService.deleteReview(review_id);
+
+            result.put("flag", true);
+
+            return result;
+        }
+
+        else if (resultCheckJwt.get("tokenExpires") == true) {
+
+            result.put("flag", false);
+
+            return result;
+        }
 
         return result;
     }

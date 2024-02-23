@@ -199,6 +199,7 @@ public interface RaceRepository extends JpaRepository<Race, Long>{
             "\n" + //
             "AND\n" + //
             "(CASE\n" + //
+            "\tWHEN :hourStartResult = '00:00' AND :hourEndResult = '00:00' THEN (query_one.races_race_time BETWEEN CAST('00:00:00' AS TIME WITHOUT TIME ZONE) AND CAST('23:59:59' AS TIME WITHOUT TIME ZONE))\n" + //
             "\tWHEN LENGTH(:hourStartResult) > 0 AND LENGTH(:hourEndResult) > 0 THEN (query_one.races_race_time BETWEEN CAST(:hourStartResult AS TIME WITHOUT TIME ZONE) AND CAST(:hourEndResult AS TIME WITHOUT TIME ZONE))\n" + //
             " \tWHEN LENGTH(:hourStartResult) = 0 AND LENGTH(:hourEndResult) = 0 THEN (query_one.races_race_time BETWEEN CAST('00:00:00' AS TIME WITHOUT TIME ZONE) AND CAST('23:59:59' AS TIME WITHOUT TIME ZONE))\n" + //
             "END)\n" + //
@@ -212,5 +213,49 @@ public interface RaceRepository extends JpaRepository<Race, Long>{
         @Param("hourStartResult") String hourStartResult,
         @Param("hourEndResult") String hourEndResult
 
+    );
+
+
+
+
+
+    // SEARCH RACE BY ID //
+
+    @Query(value="SELECT \n" + //
+                "races.id as races_id,\n" + //
+                "races.city as races_city,\n" + //
+                "races.further_details as races_further_details,\n" + //
+                "races.name_street as races_name_street,\n" + //
+                "races.number_street as races_number_street,\n" + //
+                "races.number_users as races_number_users,\n" + //
+                "races.race_date as races_race_date,\n" + //
+                "races.race_duration as races_race_duration,\n" + //
+                "races.race_time as races_race_time,\n" + //
+                "races.user_id as races_user_id,\n" + //
+                "races.created_at as races_created_at,\n" + //
+                "races.updated_at as races_updated_at,\n" + //
+                "races.race_level as races_race_level,\n" + //
+                "races.only_female as races_only_female,\n" + //
+                "races.only_male as races_only_male,\n" + //
+                "users.id as users_id,\n" + //
+                "users.email as users_email,\n" + //
+                "users.first_name as users_first_name,\n" + //
+                "users.last_name as users_last_name,\n" + //
+                "users.password as users_password,\n" + //
+                "users.birth_date as users_birth_date,\n" + //
+                "users.city as users_city,\n" + //
+                "users.street_name as users_street_name,\n" + //
+                "users.street_number as users_street_number,\n" + //
+                "users.zip_code as users_zip_code,\n" + //
+                "users.gender as users_gender,\n" + //
+                "users.picture as users_picture,\n" + //
+                "COUNT(race_user.race_id) as number_users_registered\n" + //
+                "FROM races\n" + //
+                "INNER JOIN users ON users.id = races.user_id\n" + //
+                "INNER JOIN race_user ON race_user.race_id = races.id\n" + //
+                "GROUP BY races.id, users.id\n" + //
+                "HAVING races.id = ?1", nativeQuery = true)
+    List<Map<String, Object>> searchRaceById(
+        Integer race_id
     );
 }

@@ -136,4 +136,58 @@ public class ReviewService {
             updated_at
         );
     }
+
+
+
+
+    // FETCH REVIEWS
+
+    public Map<String, Map<String, Object>> fetchReviews(
+        Integer user_id
+    ) {
+
+        List<Map<String, Object>> resultFetchReviews = reviewRepository.fetchReviews(user_id);
+
+        Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
+        
+        if (resultFetchReviews.size() > 0) {
+
+            for (int i = 0; i < resultFetchReviews.size(); i++) {
+
+                Map<String, Object> obj = new HashMap<String, Object>();
+
+                for (String key : resultFetchReviews.get(i).keySet()) {
+
+                    if (key.equals("review_created_at") || key.equals("review_updated_at")) {
+
+                        String newDateTimeString = resultFetchReviews.get(i).get(key).toString().replace(".0", "");
+                        obj.put(key, newDateTimeString);
+                    }
+
+                    else {
+
+                        obj.put(key, resultFetchReviews.get(i).get(key));
+                    }
+                }
+
+                result.put(String.valueOf(i), obj);
+            }
+        }
+
+        
+
+        return result;
+    }
+
+
+
+
+    // DELETE REVIEW //
+
+    public void deleteReview(
+        Integer review_id
+    ) {
+
+        reviewRepository.deleteReview(review_id);
+    }
 }

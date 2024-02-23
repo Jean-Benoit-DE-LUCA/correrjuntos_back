@@ -18,9 +18,17 @@ public class RaceService {
     
     private RaceRepository raceRepository;
 
+
+
+
+
     public RaceService(RaceRepository raceRepository) {
         this.raceRepository = raceRepository;
     }
+
+
+
+
 
     public Map<String, Boolean> jwtResponse(Map<String, Object> checkJWTresponse) {
 
@@ -64,6 +72,11 @@ public class RaceService {
 
         return getTokenPayloadValues;
     }
+
+
+
+
+
 
     // INSERT RACE //
 
@@ -144,6 +157,12 @@ public class RaceService {
         return raceRepository.getLastInsertedRace(userId).get(0);
     }
 
+
+
+
+
+
+
     // UPDATE RACE //
 
     public void updateRace(
@@ -192,6 +211,11 @@ public class RaceService {
         raceRepository.updateRace(inputCity, inputDate, inputMaxUsers, inputRaceTime, inputStreetName, inputStreetNumber, selectHour, selectLevel, onlyMale, onlyFemale, textAreaFurtherDetails, updated_at, id);
     }
 
+
+
+
+
+
     // INSERT RACE_USER //
 
     public void insertRaceUser(
@@ -212,6 +236,12 @@ public class RaceService {
             updated_at
         );
     }
+
+
+
+
+
+
 
     // GET LAST RACES //
 
@@ -267,6 +297,12 @@ public class RaceService {
         return newObj;
     }
 
+
+
+
+
+
+
     // GET ALL RACES BY USER //
 
     public Map<String, Map<String, Object>> findAllRacesByUser(Long user_id) {
@@ -291,6 +327,11 @@ public class RaceService {
         return result;
     }
 
+
+
+
+
+
     // GET RACE BY ID //
 
     public List<Map<Object, Object>> findRaceById(Long race_id) {
@@ -299,6 +340,11 @@ public class RaceService {
 
         return getRaceById;
     }
+
+
+
+
+
 
     // GET USERS PARTICIPATE //
 
@@ -323,12 +369,23 @@ public class RaceService {
         return result;
     }
 
+
+
+
+
+
     // GET COUNT USERS PARTICIPATE //
 
     public List<Map<String, Object>> getCountUsersParticipate() {
 
         return raceRepository.getCountUsersParticipate();
     }
+
+
+
+
+
+
 
     // SEARCH RACES //
 
@@ -376,6 +433,45 @@ public class RaceService {
         return result;
     }
 
+
+
+
+
+
+    // SEARCH RACE BY ID //
+
+    Map<String, Map<String, Object>> searchRaceById(
+        Integer race_id
+    ) {
+
+        List<Map<String, Object>> resultRace = raceRepository.searchRaceById(
+            race_id
+        );
+
+
+
+        Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
+
+        for (int i = 0; i < resultRace.size(); i++) {
+
+            Map<String, Object> newObjRace = new HashMap<String, Object>();
+
+            for (String key : resultRace.get(i).keySet()) {
+
+                newObjRace.put(key, resultRace.get(i).get(key));
+            }
+
+            result.put(String.valueOf(i), newObjRace);
+        }
+
+        return result;
+    }
+
+
+
+
+
+
     // PARTICIPATE RACE //
 
     public List<Map<Object, Object>> participateRace(
@@ -384,6 +480,12 @@ public class RaceService {
 
         return raceRepository.findRaceById(race_id);
     }
+
+
+
+
+
+
 
     // DELETE RACE_USER USER PARTICIPATE //
 
@@ -394,6 +496,12 @@ public class RaceService {
 
         raceRepository.deleteRaceUser(race_id, user_id);
     }
+
+
+
+
+
+
 
     // DELETE RACE //
 

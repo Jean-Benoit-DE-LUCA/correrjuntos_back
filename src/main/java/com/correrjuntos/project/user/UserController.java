@@ -352,10 +352,15 @@ public class UserController {
             File fileToDelete = new File(pathUpload + userObj.get(0).get("picture"));
             fileToDelete.delete();
 
+
+
             //
+
+
 
             InputStream fileContent = filePart.getInputStream();
             File fileToSave = new File(pathUpload + fileName);
+            Files.createDirectories(Paths.get(pathUpload));
             Files.copy(fileContent, fileToSave.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
 
