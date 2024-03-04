@@ -25,7 +25,7 @@ public class Jwt {
 
         String token = JWT.create()
             .withIssuer(issuer)
-            .withExpiresAt(Date.from(ZonedDateTime.now().plusSeconds(1800).toInstant()))
+            .withExpiresAt(Date.from(ZonedDateTime.now().plusSeconds(7200).toInstant())) /* 2 hours */
             .sign(Algorithm.HMAC256(props.getProperty("SECRET_KEY_JWT")));
 
         Map<String, String> tokenObj = new HashMap<String, String>();

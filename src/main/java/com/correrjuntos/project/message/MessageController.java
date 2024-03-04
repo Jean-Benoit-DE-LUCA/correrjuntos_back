@@ -83,6 +83,26 @@ public class MessageController {
             Integer race_id = (Integer)body.get("raceId");
             Integer user_id = (Integer)body.get("userId");
 
+
+
+            // check if race exists //
+
+            List<Map<String, Object>> getRaceId = messageService.getRaceId(race_id);
+
+            if (getRaceId.size() == 0) {
+
+                result.put("error", "Race does not exist.");
+
+                return result;
+            }
+
+
+
+
+
+
+            // else insert message //
+
             String dateTimeBody = (String)body.get("currentDateTime");
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

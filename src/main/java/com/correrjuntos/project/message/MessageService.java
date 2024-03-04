@@ -14,10 +14,19 @@ public class MessageService {
     
     private MessageRepository messageRepository;
 
+
+
+
+
     public MessageService(MessageRepository messageRepository) {
 
         this.messageRepository = messageRepository;
     }
+
+
+
+
+
 
     public Map<String, Boolean> jwtResponse(Map<String, Object> checkJWTresponse) {
 
@@ -61,6 +70,29 @@ public class MessageService {
 
         return getTokenPayloadValues;
     }
+
+
+
+
+
+
+
+
+    public List<Map<String, Object>> getRaceId(
+        Integer race_id
+    ) {
+
+        List<Map<String, Object>> getRaceId = messageRepository.getRaceId(race_id);
+
+        return getRaceId;
+    }
+
+
+
+
+
+
+
 
     public List<Map<String, Object>> getMessagesByRace(
         Integer race_id

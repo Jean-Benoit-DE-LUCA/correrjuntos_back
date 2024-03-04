@@ -17,6 +17,18 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Map<String, Object>> getMessagesByRace(
         Integer race_id
     );
+
+
+
+
+    @Query(value="SELECT * FROM races WHERE id = ?1", nativeQuery = true)
+    List<Map<String, Object>> getRaceId(
+        Integer race_id
+    );
+
+
+
+    
     
     @Transactional
     @Modifying

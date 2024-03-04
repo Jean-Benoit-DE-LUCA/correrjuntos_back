@@ -61,7 +61,7 @@ public interface RaceRepository extends JpaRepository<Race, Long>{
 
     // GET ALL RACES BY USER //
 
-    @Query(value="SELECT * FROM races WHERE races.user_id = ?1", nativeQuery = true)
+    @Query(value="SELECT * FROM races WHERE races.user_id = ?1 ORDER BY races.race_date DESC", nativeQuery = true)
     List<Map<Object, Object>> findAllRacesByUserId(
         Long user_id
     );
